@@ -125,7 +125,7 @@ const config = {
         getTenants: ['token', 'filter'],
       },
     },
-   
+
     {
       template: {
         method: 'POST',
@@ -139,7 +139,7 @@ const config = {
         createTenantConfig: ['token', 'body'],
       },
     },
-  
+
     {
       template: {
         method: 'GET',

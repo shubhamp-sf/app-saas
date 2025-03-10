@@ -5,8 +5,8 @@ import {PaymentDetailsDTO} from './payment-details-dto.model';
 @model()
 export class CreateTenantWithPaymentDTO extends CreateTenantWithPlanDTO {
   @property({
-    type: PaymentDetailsDTO,
+    type: 'string',
     required: true,
   })
-  paymentDetails: PaymentDetailsDTO;
+  paymentToken: string;
 }

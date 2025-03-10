@@ -55,8 +55,8 @@ describe('LeadController', () => {
       .inScope(BindingScope.SINGLETON);
     tenantMgmtProxyStub = {
       createLead: sinon.stub(),
-      createTenantConfig:sinon.stub(),
-      getTenantConfig:sinon.stub(),
+      createTenantConfig: sinon.stub(),
+      getTenantConfig: sinon.stub(),
       createInvoice: sinon.stub(),
       createTenant: sinon.stub(),
       createTenantFromLead: sinon.stub(),

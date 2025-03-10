@@ -23,8 +23,8 @@ export const PermissionKey = {
   UpdateSubscription: '7002',
   ViewSubscription: '7004',
   ViewPlan: '7008',
-  CreateTenantConfig: "10220",
-  ViewTenantConfig: "10221",
+  CreateTenantConfig: '10220',
+  ViewTenantConfig: '10221',
   // Notification Service
   ViewNotificationTemplate: '8000',
   CreateNotificationTemplate: '8001',

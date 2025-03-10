@@ -49,7 +49,10 @@ export class BillingHelperService {
         'Authorization header not present [Create Invoice]',
       );
     }
-    return this.subscriptionProxyService.createInvoice(token.replace(/^Bearer\s+/i, ''), invoiceDto);
+    return this.subscriptionProxyService.createInvoice(
+      token.replace(/^Bearer\s+/i, ''),
+      invoiceDto,
+    );
   }
   async getCustomer(filter: Filter<BillingCustomerType>): Promise<{
     customerDetails: CustomerDtoType;
@@ -62,7 +65,10 @@ export class BillingHelperService {
       );
     }
 
-    return this.subscriptionProxyService.getCustomer(token.replace(/^Bearer\s+/i, ''), filter);
+    return this.subscriptionProxyService.getCustomer(
+      token.replace(/^Bearer\s+/i, ''),
+      filter,
+    );
   }
 
   async createPaymentSource(

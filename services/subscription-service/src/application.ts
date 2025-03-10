@@ -30,6 +30,8 @@ import {
   ChargeBeeBindings,
   BillingComponentBindings,
   ChargeBeeServiceProvider,
+  StripeServiceProvider,
+  StripeBindings,
 } from 'loopback4-billing';
 
 export {ApplicationConfig};
@@ -80,12 +82,11 @@ export class SubscriptionServiceApplication extends BootMixin(
 
     // Add authentication component
     this.component(AuthenticationComponent);
-    this.bind(ChargeBeeBindings.config).to({
-      site: process.env.SITE ?? '',
-      apiKey: process.env.API_KEY ?? '',
+    this.bind(StripeBindings.config).to({
+      secretKey: process.env.STRIPE_SECRET ?? '',
     });
     this.bind(BillingComponentBindings.SDKProvider).toProvider(
-      ChargeBeeServiceProvider,
+      StripeServiceProvider,
     );
 
     this.component(SubscriptionServiceComponent);

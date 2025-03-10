@@ -4771,6 +4771,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "cycleName": {
@@ -4877,6 +4878,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "cycleName": {
@@ -4932,6 +4934,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "cycleName": {
@@ -4955,6 +4958,7 @@
         "type": "object",
         "properties": {
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "currencyCode": {
@@ -5007,6 +5011,7 @@
         "description": "(tsType: CurrencyWithRelations, schemaOptions: { includeRelations: true })",
         "properties": {
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "currencyCode": {
@@ -5035,6 +5040,7 @@
         "description": "(tsType: Partial<Currency>, schemaOptions: { partial: true })",
         "properties": {
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "currencyCode": {
@@ -5084,6 +5090,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5224,6 +5231,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5303,6 +5311,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5369,6 +5378,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5465,6 +5475,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5515,6 +5526,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5560,6 +5572,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5646,6 +5659,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5691,6 +5705,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "name": {
@@ -5732,6 +5747,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "subscriberId": {
@@ -5864,6 +5880,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "invoiceId": {
@@ -5915,6 +5932,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "subscriberId": {
@@ -5994,6 +6012,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "subscriberId": {
@@ -6059,6 +6078,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "size": {
@@ -6149,6 +6169,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "size": {
@@ -6196,6 +6217,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "size": {
@@ -6406,6 +6428,9 @@
           "customerId": {
             "type": "string"
           },
+          "currencyCode": {
+            "type": "string"
+          },
           "options": {
             "type": "object"
           },
@@ -6430,6 +6455,9 @@
         "description": "(tsType: Omit<InvoiceDto, 'id' | 'status'>, schemaOptions: { title: 'newInvoice', exclude: [ 'id', 'status' ] })",
         "properties": {
           "customerId": {
+            "type": "string"
+          },
+          "currencyCode": {
             "type": "string"
           },
           "options": {
@@ -6457,6 +6485,9 @@
             "type": "string"
           },
           "customerId": {
+            "type": "string"
+          },
+          "currencyCode": {
             "type": "string"
           },
           "options": {
@@ -6639,11 +6670,11 @@
               "expiryYear",
               "cvv"
             ]
+          },
+          "options": {
+            "type": "object"
           }
         },
-        "required": [
-          "card"
-        ],
         "additionalProperties": false
       },
       "NewPaymentSource": {
@@ -6680,11 +6711,11 @@
               "expiryYear",
               "cvv"
             ]
+          },
+          "options": {
+            "type": "object"
           }
         },
-        "required": [
-          "card"
-        ],
         "additionalProperties": false,
         "x-typescript-type": "Omit<PaymentSourceDto, 'id'>"
       },
