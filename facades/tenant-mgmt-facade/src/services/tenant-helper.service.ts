@@ -11,6 +11,7 @@ import {
   PaymentSourceDtoType,
   SubscriptionProxyService,
   TenantMgmtProxyService,
+  UserTenantServiceProxy,
 } from './proxies';
 import {
   CheckBillingSubscriptionsDTO,
@@ -23,6 +24,8 @@ import {NotificationService} from './notifications/notification.service';
 import {CryptoHelperService} from '@sourceloop/ctrl-plane-tenant-management-service';
 import {Filter} from '@loopback/repository';
 import {TenantMgmtConfig} from '../models/dtos/tenant-mgmt-config.model';
+import {UserDto} from '../models/user-dto.model';
+import {IdpDetailsDTO} from '../models/idp-details-dto.model';
 const SECONDS_IN_ONE_HOUR = 60 * 60;
 @injectable({scope: BindingScope.TRANSIENT})
 export class TenantHelperService {
@@ -35,6 +38,8 @@ export class TenantHelperService {
     private readonly tenantMgmtProxyService: TenantMgmtProxyService,
     @inject('services.BillingHelperService')
     private readonly billingHelperService: BillingHelperService,
+    @inject('services.UserTenantServiceProxy')
+    private readonly utService: UserTenantServiceProxy,
     @service(NotificationService)
     private notificationService: NotificationService,
     @inject(LOGGER.LOGGER_INJECT)
@@ -127,7 +132,11 @@ export class TenantHelperService {
     );
     return tenantConfig;
   }
-  async createTenant(dto: CreateTenantWithPlanDTO,sourceOfOrigin:string, token?: string) {
+  async createTenant(
+    dto: CreateTenantWithPlanDTO,
+    sourceOfOrigin: string,
+    token?: string,
+  ) {
     token = token ?? this.request.headers.authorization;
     if (!token) {
       throw new HttpErrors.Unauthorized(
@@ -158,31 +167,29 @@ export class TenantHelperService {
       new TenantOnboardDTO(dto),
     );
 
-    if(sourceOfOrigin!=='market_place'){
+    if (sourceOfOrigin !== 'market_place') {
+      /**for market place we assume IdP will always be cognito
+       * if we call the tenant config creation api make sure to add its permission
+       * in the token
+       */
+      const config = new TenantMgmtConfig({
+        configKey: 'auth0',
+        configValue: {
+          password: 'test123@123',
+          connection: 'Username-Password-Authentication',
+          display_name: 'corporatidonw',
+          verify_email: true,
+          page_background: '#000000',
+          primary_color: '#0059d6',
+        },
+        tenantId: tenant.id,
+      });
 
-          /**for market place we assume IdP will always be cognito
-           * if we call the tenant config creation api make sure to add its permission
-           * in the token
-           */
-          const config = new TenantMgmtConfig({
-            configKey: 'auth0',
-            configValue: {
-              password: 'test123@123',
-              connection: 'Username-Password-Authentication',
-              display_name: 'corporatidonw',
-              verify_email: true,
-              page_background: '#000000',
-              primary_color: '#0059d6',
-            },
-            tenantId: tenant.id,
-          });
-
-          await this.tenantMgmtProxyService.createTenantConfig(token, config);
-          console.log('step 2');
-    }else{
+      await this.tenantMgmtProxyService.createTenantConfig(token, config);
+      console.log('step 2');
+    } else {
       // DO NOTHING
     }
-
 
     const customer: CustomerDtoType = {
       firstName: tenant.contacts[0].firstName,
@@ -390,7 +397,6 @@ export class TenantHelperService {
     });
     return tenant;
   }
-
   async getTenantBills(userId: string): Promise<SubscriptionBillDTO[]> {
     const token = this.cryptoHelperService.generateTempToken({
       id: userId,
@@ -819,4 +825,5 @@ export class TenantHelperService {
 
     return tenantDetails;
   }
+
 }

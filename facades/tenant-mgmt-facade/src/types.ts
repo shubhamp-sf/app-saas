@@ -11,6 +11,7 @@ export type LeadUserWithToken = {
   token: string;
 } & LeadUser;
 
+import { AnyObject } from '@loopback/repository';
 import {IServiceConfig} from '@sourceloop/core';
 
 export interface ISubscription {
@@ -132,4 +133,23 @@ export interface IPlanItem {
 export interface IValue {
   name: string;
   value: number | string | boolean;
+}
+export type ConfigureIdpFunc<T> = (payload: IdpDetails) => Promise<T>;
+export interface Tenant {
+  identityProvider: string; 
+  id: string; 
+  name: string; 
+  key: string; 
+}
+
+export interface IdpDetails {
+  tenant: Tenant;
+}
+export interface IdpResp {
+  authId: string;
+}
+export enum IdPKey {
+  AUTH0 = 'auth0',
+  COGNITO = 'cognito',
+  KEYCLOAK = 'keycloak',
 }

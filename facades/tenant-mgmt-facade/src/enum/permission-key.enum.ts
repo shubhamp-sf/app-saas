@@ -1,0 +1,15 @@
+﻿export const enum PermissionKey {
+  ViewTenantUser = 'ViewTenantUser',
+  CreateTenantUser = 'CreateTenantUser',
+  UpdateTenantUser = 'UpdateTenantUser',
+  UpdateTenantUserRestricted = 'UpdateTenantUserRestricted',
+  DeleteTenantUser = 'DeleteTenantUser',
+  CreateTenant = 'CreateTenant',
+  ViewTenant = 'ViewTenant',
+  ViewTenantUserNum = '12',
+  CreateTenantUserNum = '13',
+  UpdateTenantUserNum = '14',
+  DeleteTenantUserNum = '15',
+  CreateTenantNum = '16',
+  ViewTenantNum = '17',
+}

@@ -26,6 +26,8 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import * as openapi from './openapi.json';
+import { KeycloakIdpProvider } from './providers/idp';
+import { UserTenantServiceBindings } from './keys';
 
 export {ApplicationConfig};
 
@@ -78,7 +80,9 @@ export class UserTenantService extends BootMixin(
     this.component(AuthenticationComponent);
 
     this.component(UserTenantServiceComponent);
-
+    this.bind(UserTenantServiceBindings.IDP_KEYCLOAK).toProvider(
+      KeycloakIdpProvider,
+    ),
     // Add bearer verifier component
     this.bind(BearerVerifierBindings.Config).to({
       type: BearerVerifierType.service,

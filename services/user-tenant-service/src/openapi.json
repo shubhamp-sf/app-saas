@@ -10,6 +10,36 @@
     }
   },
   "paths": {
+    "/create-user": {
+      "post": {
+        "x-controller-name": "IdpController",
+        "x-operation-name": "idpConfigure",
+        "tags": [
+          "IdpController"
+        ],
+        "description": "Configures a user for a specified identity provider (Keycloak or Cognito) and returns authentication details (authId and authSecret).",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Creating User"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdpDetailsDTO"
+              }
+            }
+          }
+        },
+        "operationId": "IdpController.idpConfigure"
+      }
+    },
     "/groups/{id}/user/bulk": {
       "post": {
         "x-controller-name": "GroupUserController",
@@ -2479,6 +2509,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "firstName": {
@@ -2836,6 +2867,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "groupId": {
@@ -3207,6 +3239,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "groupId": {
@@ -3533,6 +3566,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "firstName": {
@@ -3714,6 +3748,7 @@
             "type": "string"
           },
           "id": {
+            "readOnly": true,
             "type": "string"
           },
           "firstName": {
@@ -4155,6 +4190,108 @@
         },
         "additionalProperties": false,
         "x-typescript-type": "Partial<UserLevelPermission>"
+      },
+      "IdpDetailsDTO": {
+        "title": "IdpDetailsDTO",
+        "type": "object",
+        "description": "model describing payload for IDP controller (tsType: IdpDetailsDTO, schemaOptions: { title: 'IdpDetailsDTO' })",
+        "properties": {
+          "deleted": {
+            "type": "boolean"
+          },
+          "deletedOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "modifiedBy": {
+            "type": "string"
+          },
+          "id": {
+            "readOnly": true,
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+?[1-9]\\d{1,14}$"
+          },
+          "authClientIds": {
+            "type": "string"
+          },
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "photoUrl": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "description": "This field takes a single character as input in database.\n    'M' for male and 'F' for female.",
+            "enum": [
+              "M",
+              "F",
+              "O"
+            ]
+          },
+          "dob": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "defaultTenantId": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "tenant": {
+            "type": "object",
+            "description": "Tenat object"
+          }
+        },
+        "required": [
+          "firstName",
+          "username",
+          "email",
+          "roleId"
+        ],
+        "additionalProperties": false
       },
       "PingResponse": {
         "type": "object",
