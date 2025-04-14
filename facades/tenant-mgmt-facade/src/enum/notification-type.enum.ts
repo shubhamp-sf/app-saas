@@ -3,4 +3,5 @@ export enum NotificationType {
   WelcomeTenant = 'tenant_welcome',
   SubscriptionExpired = 'subscription_expired',
   SubscriptionEndingSoon = 'subscription_ending_soon',
+  CompleteTenantRegistration = 'complete_tenant_registration',
 }

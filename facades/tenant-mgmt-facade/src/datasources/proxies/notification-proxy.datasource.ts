@@ -22,7 +22,7 @@ const config = {
         headers: {
           // need to add Bearer here as we are adding token ourselves
           // in case token is coming form front end no need to add.
-          Authorization: 'Bearer {token}',
+          Authorization: 'Bearer {token}', // need to remove Bearer for testing lead/send-reminder api, will be modified as per the case.
         },
       },
       functions: {
@@ -34,7 +34,7 @@ const config = {
         method: 'POST',
         url: '/notifications',
         headers: {
-          Authorization: 'Bearer {token}',
+          Authorization: 'Bearer {token}',// need to remove Bearer for testing lead/send-reminder api,will be modified as per the case.
         },
         body: '{body}',
       },

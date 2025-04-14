@@ -1,5 +1,5 @@
 import {inject, service} from '@loopback/core';
-import {Filter} from '@loopback/repository';
+import {AnyObject, Filter} from '@loopback/repository';
 import {
   HttpErrors,
   Request,
@@ -253,5 +253,109 @@ export class LeadController {
         };
       });
     return matchedArray;
+  }
+  @authorize({
+    permissions: [PermissionKey.ViewLead, PermissionKey.ViewTenant],
+  })
+  @authenticate(STRATEGY.BEARER, {
+    passReqToCallback: true,
+  })
+  @post(`/leads/send-reminder`, {
+    description:
+      'This API endpoint sends reminder emails to leads, prompting them to complete their tenant registration.',
+    security: OPERATION_SECURITY_SPEC,
+    requestBody: {
+      content: {
+        [CONTENT_TYPE.JSON]: {
+          schema: {
+            type: 'object',
+            additionalProperties: true, 
+          },
+        },
+      },
+    },
+    responses: {
+      [STATUS_CODE.OK]: {
+        description: 'Confirmation message of reminder email sent',
+        content: {
+          [CONTENT_TYPE.JSON]: {
+            schema: {
+              type: 'object',
+              properties: {
+                message: {type: 'string'},
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async sendReminderToLeads(
+    @requestBody({
+      content: {
+        [CONTENT_TYPE.JSON]: {
+          schema: {
+            type: 'object',
+            additionalProperties: true, 
+          },
+        },
+      },
+    })
+    requestBody: AnyObject,  
+  ): Promise<{message: string}> {
+    const token = this.request.headers.authorization!;
+    const leadFilter: Filter<Lead> = {
+      where: {
+        isValidated: true,
+      },
+    };
+
+    let leads = await this.tenantMgmtProxyService.getLeads(token, leadFilter);
+    const leadIds = leads.map(lead => lead.id);
+
+    const tenantFilter: Filter<Tenant> = {
+      where: {
+        leadId: {
+          inq: leadIds,
+        },
+      },
+    };
+
+    const tenants = await this.tenantMgmtProxyService.getTenants(token, tenantFilter);
+    const unmatchedLeads = leads.filter(
+      lead => !tenants.some(tenant => tenant.leadId === lead.id)
+    );
+    const daysThreshold = parseInt(process.env.DAYS || "10", 10);
+    const thresholdDate = new Date();
+    thresholdDate.setDate(thresholdDate.getDate() - daysThreshold);
+    
+    const leadsOlderThanThreshold = unmatchedLeads.filter(unmatchedLead => {
+      if (!unmatchedLead.createdOn) return false; 
+      const leadCreatedOn = new Date(unmatchedLead.createdOn);
+      return leadCreatedOn < thresholdDate;
+    });
+    
+    const notificationPromises = [];
+    for (const unmatchedLead of leadsOlderThanThreshold) {
+      notificationPromises.push(
+        this.notificationService
+          .send(
+            unmatchedLead.email,
+            NotificationType.CompleteTenantRegistration,
+            {
+              name: unmatchedLead.firstName,
+              link: `${process.env.APP_VALIDATE_URL}/${unmatchedLead.id}?code=${unmatchedLead.companyName}`,
+            },
+            token,
+          )
+          .catch(e => this.logger.error(e)),
+      );
+    }
+
+    await Promise.all(notificationPromises);
+    this.logger.info('Notifications sent to leads without tenants successfully');
+    return {
+      message: 'Reminder emails sent successfully.',
+    };
   }
 }
