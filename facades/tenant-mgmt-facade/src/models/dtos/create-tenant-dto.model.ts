@@ -72,6 +72,13 @@ export class CreateTenantWithPlanDTO extends Model {
   key: string;
 
   @property({
+    type: 'string',
+    description:
+      'Acquisition source of the tenant. Eg. AWS Marketplace, Super Admin Portal, Registration Page.',
+  })
+  source: string;
+
+  @property({
     required: true,
     jsonSchema: {
       type: 'array',
