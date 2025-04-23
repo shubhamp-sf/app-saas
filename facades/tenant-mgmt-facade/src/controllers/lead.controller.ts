@@ -1,5 +1,5 @@
 import {inject, service} from '@loopback/core';
-import {Filter} from '@loopback/repository';
+import {AnyObject, Filter, repository} from '@loopback/repository';
 import {
   HttpErrors,
   Request,
@@ -18,7 +18,10 @@ import {
   STATUS_CODE,
   rateLimitKeyGenPublic,
 } from '@sourceloop/core';
-import {CryptoHelperService} from '@sourceloop/ctrl-plane-tenant-management-service';
+import {
+  CryptoHelperService,
+  LeadTokenRepository,
+} from '@sourceloop/ctrl-plane-tenant-management-service';
 import {STRATEGY, authenticate} from 'loopback4-authentication';
 import {authorize} from 'loopback4-authorization';
 import {ratelimit} from 'loopback4-ratelimiter';
@@ -51,6 +54,8 @@ export class LeadController {
     private readonly CryptoHelperService: CryptoHelperService,
     @inject(LOGGER.LOGGER_INJECT)
     private logger: ILogger,
+    @repository(LeadTokenRepository)
+    private leadTokenRepository: LeadTokenRepository,
   ) {}
 
   @ratelimit(true, {
@@ -253,5 +258,102 @@ export class LeadController {
         };
       });
     return matchedArray;
+  }
+  @authorize({
+    permissions: [PermissionKey.ViewLead],
+  })
+  @authenticate(STRATEGY.BEARER, {
+    passReqToCallback: true,
+  })
+  @post(`/leads/{id}/reminder`, {
+    description:
+      'This api sends email to lead using leadId for completing tenant registration step.',
+    security: OPERATION_SECURITY_SPEC,
+    responses: {
+      [STATUS_CODE.OK]: {
+        description: 'Tenant model instance',
+        content: {
+          [CONTENT_TYPE.JSON]: {schema: Object},
+        },
+      },
+      content: {
+        [CONTENT_TYPE.JSON]: {
+          schema: {
+            type: 'object',
+            additionalProperties: true,
+          },
+        },
+      },
+    },
+  })
+  async sendEmailByLeadId(
+    @requestBody({
+      content: {
+        [CONTENT_TYPE.JSON]: {
+          schema: getModelSchemaRef(Object, {}),
+        },
+      },
+    })
+    dto: Object,
+    @param.path.string('id') id: string,
+  ): Promise<AnyObject> {
+    const tokens = this.request.headers.authorization;
+
+    if (!tokens) {
+      throw HttpErrors.Unauthorized();
+    }
+    const leadFilter = {
+      where: {
+        id: id,
+      },
+    };
+    const sendRemindertoLead = await this.tenantMgmtProxyService.getLeads(
+      tokens,
+      leadFilter,
+    );
+    const leads = sendRemindertoLead[0];
+
+    const token = this.CryptoHelperService.generateTempToken(
+      {
+        id: leads.id,
+        email: leads.email,
+        permissions: [
+          PermissionKey.CreateTenant,
+          PermissionKey.ProvisionTenant,
+          PermissionKey.ViewLead,
+          PermissionKey.ViewPlan,
+          PermissionKey.ViewSubscription,
+          PermissionKey.CreateInvoice,
+        ],
+      },
+      +process.env.LEAD_TOKEN_EXPIRY!,
+    );
+    const randomKey = this.CryptoHelperService.generateRandomString(
+      +process.env.LEAD_KEY_LENGTH!,
+    );
+    await this.leadTokenRepository.set(randomKey, {token});
+    await this.leadTokenRepository.expire(
+      randomKey,
+      +process.env.VALIDATION_TOKEN_EXPIRY!,
+    );
+
+    this.notificationService
+      .send(
+        leads.email,
+        NotificationType.ValidateLead,
+        {
+          appName: process.env.APP_NAME,
+          link: `${process.env.APP_VALIDATE_URL}/${leads.id}?code=${randomKey}`,
+        },
+        this.CryptoHelperService.generateTempToken({
+          ...leads,
+          permissions: [
+            PermissionKey.CreateNotification,
+            PermissionKey.ViewNotificationTemplate,
+          ],
+        }),
+      )
+      .catch(e => this.logger.error(e));
+    return {key: randomKey, id: leads.id};
   }
 }
