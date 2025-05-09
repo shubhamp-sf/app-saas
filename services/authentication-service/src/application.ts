@@ -35,7 +35,8 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import * as openapi from './openapi.json';
 import {CognitoStrategyFactoryProvider} from 'loopback4-authentication/passport-cognito-oauth2';
-import {CognitoOauthVerifyProvider} from './providers';
+import {CognitoOauthVerifyProvider, KeycloakVerifyProvider} from './providers';
+import { KeycloakStrategyFactoryProvider } from 'loopback4-authentication/passport-keycloak';
 
 export {ApplicationConfig};
 
@@ -105,7 +106,10 @@ export class AuthenticationService extends BootMixin(
     this.bind(Strategies.Passport.COGNITO_OAUTH2_VERIFIER).toProvider(
       CognitoOauthVerifyProvider,
     );
-
+    this.bind(Strategies.Passport.KEYCLOAK_STRATEGY_FACTORY).toProvider(
+      KeycloakStrategyFactoryProvider
+    );
+    this.bind(Strategies.Passport.KEYCLOAK_VERIFIER).toProvider(KeycloakVerifyProvider);
     //setup the mfa
     this.bind(AuthServiceBindings.MfaConfig).to({
       secondFactor: STRATEGY.OTP,
