@@ -1,2 +1,0 @@
-ALTER TABLE IF EXISTS main.plans
-    DROP COLUMN IF EXISTS size;

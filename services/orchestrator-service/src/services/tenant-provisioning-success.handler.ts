@@ -5,18 +5,19 @@ import {
 import {injectable, BindingScope, Provider} from '@loopback/core';
 import {AnyObject} from '@loopback/repository';
 import {EventBridgeClient, PutEventsCommand} from '@aws-sdk/client-eventbridge';
+import {consumer, IConsumer, QueueType} from 'loopback4-message-bus-connector';
 
 @injectable({scope: BindingScope.TRANSIENT})
-export class TenantProvisioningSuccessHandlerProvider
-  implements Provider<TenantProvisioningSuccessHandler>
+@consumer
+export class TenantProvisioningSuccessHandlerConsumerProvider
+  implements IConsumer<AnyObject, string>
 {
+  event: DefaultEventTypes.TENANT_PROVISIONING_SUCCESS =
+    DefaultEventTypes.TENANT_PROVISIONING_SUCCESS;
+  queue: QueueType = QueueType.EventBridge;
   constructor() {}
 
-  value() {
-    return async (body: AnyObject) => this.handler(body);
-  }
-
-  private async handler(detail: AnyObject): Promise<void> {
+  async handle(detail: AnyObject): Promise<void> {
     console.log('Provisioning Success Handler Detail Received:', detail);
 
     const eventBridgeClient = new EventBridgeClient({

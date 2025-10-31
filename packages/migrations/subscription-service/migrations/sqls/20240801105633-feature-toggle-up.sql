@@ -1,4 +1,10 @@
-CREATE TABLE IF NOT EXISTS main.features (
+/* Replace with your SQL commands */
+CREATE SCHEMA IF NOT EXISTS main;
+
+SET search_path TO main,public;
+GRANT ALL ON SCHEMA main TO public;
+
+CREATE TABLE main.features (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL,
 	name            	 text  NOT NULL ,
 	key            		 text  NOT NULL ,
@@ -12,11 +18,11 @@ CREATE TABLE IF NOT EXISTS main.features (
     modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
     deleted              bool DEFAULT false NOT NULL ,
     deleted_on           timestamptz   ,
-    deleted_by           uuid,
+    deleted_by           uuid   ,
 	CONSTRAINT pk_features_id PRIMARY KEY ( id )
  );
 
- CREATE TABLE IF NOT EXISTS main.strategies (
+ CREATE TABLE main.strategies (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL,
 	name            	 text  NOT NULL ,
 	key            		 text  NOT NULL ,
@@ -27,11 +33,11 @@ CREATE TABLE IF NOT EXISTS main.features (
     modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
     deleted              bool DEFAULT false NOT NULL ,
     deleted_on           timestamptz   ,
-    deleted_by           uuid,
+    deleted_by           uuid   ,
 	CONSTRAINT pk_strategies_id PRIMARY KEY ( id )
  );
 
- CREATE TABLE IF NOT EXISTS main.feature_values (
+ CREATE TABLE main.feature_values (
 	id                   	uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL,
 	feature_key             varchar(50)  NOT NULL ,
 	strategy_key            varchar(50)  NOT NULL ,
@@ -44,7 +50,7 @@ CREATE TABLE IF NOT EXISTS main.features (
     modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
     deleted              bool DEFAULT false NOT NULL ,
     deleted_on           timestamptz   ,
-    deleted_by           uuid,
+    deleted_by           uuid   ,
 	CONSTRAINT pk_feature_values_id PRIMARY KEY ( id )
  );
 
@@ -56,5 +62,3 @@ INSERT INTO main.strategies(name, key, priority)
 
 INSERT INTO main.strategies(name, key, priority)
 	VALUES ('User', 'User', '3');
-INSERT INTO main.strategies(name, key, priority)
-	VALUES ('Plan', 'Plan', '4');

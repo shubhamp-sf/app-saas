@@ -1,11 +1,11 @@
 'use strict';
 
-let dbm;
-let type;
-let seed;
-let fs = require('fs');
-let path = require('path');
-let Promise;
+var dbm;
+var type;
+var seed;
+var fs = require('fs');
+var path = require('path');
+var Promise;
 
 /**
  * We receive the dbmigrate dependency from dbmigrate initially.
@@ -19,10 +19,10 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db) {
-  let filePath = path.join(
+  var filePath = path.join(
     __dirname,
     'sqls',
-    '20240207060847-seed-currencies-and-billing-cycles-up.sql',
+    '20240805112128-remove-plan-items-up.sql',
   );
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
@@ -37,10 +37,10 @@ exports.up = function (db) {
 };
 
 exports.down = function (db) {
-  let filePath = path.join(
+  var filePath = path.join(
     __dirname,
     'sqls',
-    '20240207060847-seed-currencies-and-billing-cycles-down.sql',
+    '20240805112128-remove-plan-items-down.sql',
   );
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
