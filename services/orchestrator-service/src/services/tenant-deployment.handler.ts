@@ -1,4 +1,4 @@
-import {TenantDeploymentHandler} from '@arc-saas/orchestrator-service';
+import {DefaultEventTypes, TenantDeploymentHandler} from '@arc-saas/orchestrator-service';
 import {injectable, BindingScope, Provider, service} from '@loopback/core';
 import {AnyObject} from '@loopback/repository';
 import {IncomingMessage} from 'http';
@@ -6,21 +6,21 @@ import * as https from 'https';
 import * as http from 'http';
 import * as crypto from 'crypto';
 import {DataStoreService} from './data-store.service';
+import { consumer, IConsumer, QueueType } from 'loopback4-message-bus-connector';
 
 @injectable({scope: BindingScope.TRANSIENT})
-export class TenantDeploymentProvider
-  implements Provider<TenantDeploymentHandler>
+@consumer
+export class TenantDeploymentConsumerProvider
+  implements IConsumer<AnyObject,string>
 {
+  event:DefaultEventTypes.TENANT_DEPLOYMENT=DefaultEventTypes.TENANT_DEPLOYMENT;
+  queue:QueueType=QueueType.EventBridge;
   constructor(
     @service(DataStoreService)
     private readonly dataStoreService: DataStoreService,
   ) {}
 
-  value() {
-    return async (body: AnyObject) => this.handler(body);
-  }
-
-  private async handler(detail: AnyObject): Promise<void> {
+  async handle(detail: AnyObject): Promise<void> {
     console.log('Tenant Deployment: ', detail);
 
     const httpModule = this.getHttpModule(detail.API_ENDPOINT);

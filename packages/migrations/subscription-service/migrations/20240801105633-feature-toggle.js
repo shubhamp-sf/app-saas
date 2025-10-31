@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var dbm;
 var type;
 var seed;
-var fs = require("fs");
-var path = require("path");
+var fs = require('fs');
+var path = require('path');
 var Promise;
 
 /**
@@ -21,21 +21,17 @@ exports.setup = function (options, seedLink) {
 exports.up = function (db) {
   var filePath = path.join(
     __dirname,
-    "sqls",
-    "20240826054503-seed-size-config-and-features-up.sql"
+    'sqls',
+    '20240801105633-feature-toggle-up.sql',
   );
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, { encoding: "utf-8" }, function (err, data) {
+    fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
       if (err) return reject(err);
-      console.log("received data: " + data);
+      console.log('received data: ' + data);
 
       resolve(data);
     });
   }).then(function (data) {
-    data = data.replaceAll(
-      "{{ADMIN_USER_TENANT_ID}}",
-      process.env.ADMIN_USER_TENANT_ID
-    );
     return db.runSql(data);
   });
 };
@@ -43,13 +39,13 @@ exports.up = function (db) {
 exports.down = function (db) {
   var filePath = path.join(
     __dirname,
-    "sqls",
-    "20240826054503-seed-size-config-and-features-down.sql"
+    'sqls',
+    '20240801105633-feature-toggle-down.sql',
   );
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, { encoding: "utf-8" }, function (err, data) {
+    fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
       if (err) return reject(err);
-      console.log("received data: " + data);
+      console.log('received data: ' + data);
 
       resolve(data);
     });

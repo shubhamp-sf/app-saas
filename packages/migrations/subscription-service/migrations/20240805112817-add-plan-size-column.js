@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var dbm;
 var type;
 var seed;
-var fs = require("fs");
-var path = require("path");
+var fs = require('fs');
+var path = require('path');
 var Promise;
 
 /**
@@ -21,21 +21,17 @@ exports.setup = function (options, seedLink) {
 exports.up = function (db) {
   var filePath = path.join(
     __dirname,
-    "sqls",
-    "20240926133348-add-idp-feature-up.sql"
+    'sqls',
+    '20240805112817-add-plan-size-column-up.sql',
   );
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, { encoding: "utf-8" }, function (err, data) {
+    fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
       if (err) return reject(err);
-      console.log("received data: " + data);
+      console.log('received data: ' + data);
 
       resolve(data);
     });
   }).then(function (data) {
-    data = data.replaceAll(
-      "{{ADMIN_USER_TENANT_ID}}",
-      process.env.ADMIN_USER_TENANT_ID
-    );
     return db.runSql(data);
   });
 };
@@ -43,13 +39,13 @@ exports.up = function (db) {
 exports.down = function (db) {
   var filePath = path.join(
     __dirname,
-    "sqls",
-    "20240926133348-add-idp-feature-down.sql"
+    'sqls',
+    '20240805112817-add-plan-size-column-down.sql',
   );
   return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, { encoding: "utf-8" }, function (err, data) {
+    fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
       if (err) return reject(err);
-      console.log("received data: " + data);
+      console.log('received data: ' + data);
 
       resolve(data);
     });
